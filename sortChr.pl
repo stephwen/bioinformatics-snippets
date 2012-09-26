@@ -6,7 +6,7 @@ print join(", ", sort sortChr ("chrX", "chr2", "chr5", "chrY", "chrMt"));
 
 
 # this block can be used to sort chromosome names
-# it will returnered a list of chromosome names in the usual order
+# it will return a list of chromosome names in the usual order
 # ie. autosomes first, in numerical ascending order,
 # and sex chromosomes then.
 sub sortChr {
