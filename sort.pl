@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 print join(", ", sort sortChr ("chrX", "chr2", "chr5", "chrY", "chrMt"));
-
+print "\n";
 print join(", ", sort sortCyto ("p12", "p13.5", "p13.2", "p15.3", "q31.2", "q31.3", "q32", "q33.1", "q33.2", "p14.1", "p12.2", "p15.33", "q11.1"));
 
 # this block can be used to sort chromosome names
@@ -11,8 +11,10 @@ print join(", ", sort sortCyto ("p12", "p13.5", "p13.2", "p15.3", "q31.2", "q31.
 # ie. autosomes first, in numerical ascending order,
 # and sex chromosomes then.
 sub sortChr {
-	my $chr1 = substr($a, 3);
-	my $chr2 = substr($b, 3);
+	my $chr1;
+	my $chr2;
+	if ($a =~ m/chr/i) { $chr1 = substr($a, 3); } else { $chr1 = $a; }
+	if ($b =~ m/chr/i) { $chr2 = substr($b, 3); } else { $chr2 = $b; }
 	if ($chr1 =~ /\d+/ && $chr2 =~ /\D+/) { return -1; }
 	if ($chr1 =~ /\D+/ && $chr2 =~ /\d+/) { return 1; }
 	if ($chr1 =~ /\d+/ && $chr2 =~ /\d+/) { return $chr1 <=> $chr2; }
