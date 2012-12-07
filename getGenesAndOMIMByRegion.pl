@@ -1,8 +1,11 @@
 #!/usr/bin/perl
 #
-# This script outputs a list of genes, and their corresponding OMIM links if available,
+# This script outputs a list of genes, and their corresponding OMIM and OMIM Morbid links if available,
 # when given a chromosome location or a chromosome region, or a file containing
 # several chromosome locations or chromosome regions
+#
+# Output format:
+# chr:start-end    gene name    OMIM links    OMIM Morbid links
 #
 use strict;
 use warnings;
@@ -67,13 +70,21 @@ sub regionMode {
 		my $end = $gene->seq_region_end();	
 		my $name = $gene->external_name();
     		print "chr".$chr.":".$start."-".$end."\t$name\t";
-		my @xrefs = @{ $gene->get_all_xrefs('MIM_GENE%') };
+		my @xrefs = @{ $gene->get_all_xrefs('MIM_GENE%')};
 		for my $xref (@xrefs) {
 			my $omimString = $xref->display_id();
 			if ($omimString =~ /(\d{6})/g) {
 				print "http://omim.org/entry/".$1." ";
 			}
 		}
+		print "\t";
+                @xrefs = @{ $gene->get_all_xrefs('MIM_MORBID%')};
+                for my $xref (@xrefs) {
+                        my $omimString = $xref->display_id();
+                        if ($omimString =~ /(\d{6})/g) {
+                                print "http://omim.org/entry/".$1." ";
+                        }
+                }
 		print "\n";
 	}
 }
