@@ -127,7 +127,7 @@ sub loadEnsembl {
 sub getPhenotypes {
 	my $OMIMNumber = shift;
 	my $return = "";
-	my $url = "http://api.omim.org/api/entry?apiKey=".$OMIMAPIKey."&mimNumber=".$OMIMNumber."&include=geneMap&phenotypeExists=true";
+	my $url = "http://api.europe.omim.org/api/entry?apiKey=".$OMIMAPIKey."&mimNumber=".$OMIMNumber."&include=geneMap&phenotypeExists=true";
 	my $xml = get($url);
 	my $xmlObject = new XML::Simple;
 	my $data = $xmlObject->XMLin($xml, ForceArray => ['phenotypeMap']);
