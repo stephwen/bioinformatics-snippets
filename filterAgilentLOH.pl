@@ -30,18 +30,15 @@ while (my $line = <IN>) {
 	next if 1..26;
 	chomp($line);
 	my ($Index, $ArrayName, $Class, $Chr, $Cytoband, $SizeBP, $Start, $Stop,
-		$MaxCytoband, $MaxSizeBP, $MaxStartBP, $MaxStopBP, $Type, $Probes,
-		$pValuePerLOHScore, $AvgCGHLR, $GeneNames, $CNVDGV_hg19, $Cytoband_hg19,
-		$Genes_hg19, $PseudoAutosomalRegions_hg19, $CNVDGV_hg18, $Cytoband_hg18,
-		$Genes_hg18, $PseudoAutosomalRegions_hg18) = split(/\t/, $line);
-		$MaxStartBP =~ s/,//g;
-		$MaxStopBP =~ s/,//g;
+		$Type, $Probes,	$pValuePerLOHScore, $AvgCGHLR, $GeneNames) = split(/\t/, $line);
+		$Start =~ s/,//g;
+		$Stop =~ s/,//g;
 	if ($Type eq "LOH") {
 		if ($runs1{$Chr}) {
-			my $new = new Set::IntSpan $MaxStartBP."-".$MaxStopBP;
+			my $new = new Set::IntSpan $Start."-".$Stop;
 			$runs1{$Chr}->U($new);
 		} else {
-			$runs1{$Chr} = new Set::IntSpan $MaxStartBP."-".$MaxStopBP;
+			$runs1{$Chr} = new Set::IntSpan $Start."-".$Stop;
 		}
 	}
 }
@@ -53,18 +50,15 @@ while (my $line = <IN>) {
 	next if 1..26;
 	chomp($line);
 	my ($Index, $ArrayName, $Class, $Chr, $Cytoband, $SizeBP, $Start, $Stop,
-		$MaxCytoband, $MaxSizeBP, $MaxStartBP, $MaxStopBP, $Type, $Probes,
-		$pValuePerLOHScore, $AvgCGHLR, $GeneNames, $CNVDGV_hg19, $Cytoband_hg19,
-		$Genes_hg19, $PseudoAutosomalRegions_hg19, $CNVDGV_hg18, $Cytoband_hg18,
-		$Genes_hg18, $PseudoAutosomalRegions_hg18) = split(/\t/, $line);
-		$MaxStartBP =~ s/,//g;
-		$MaxStopBP =~ s/,//g;
+		$Type, $Probes,	$pValuePerLOHScore, $AvgCGHLR, $GeneNames) = split(/\t/, $line);
+		$Start =~ s/,//g;
+		$Stop =~ s/,//g;
 	if ($Type eq "LOH") {
 		if ($runs2{$Chr}) {
-			my $new = new Set::IntSpan $MaxStartBP."-".$MaxStopBP;
+			my $new = new Set::IntSpan $Start."-".$Stop;
 			$runs2{$Chr}->U($new);
 		} else {
-			$runs2{$Chr} = new Set::IntSpan $MaxStartBP."-".$MaxStopBP;
+			$runs2{$Chr} = new Set::IntSpan $Start."-".$Stop;
 		}
 	}
 }

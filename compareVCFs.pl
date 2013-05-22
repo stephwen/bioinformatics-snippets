@@ -124,8 +124,10 @@ close(OUT);
 ####################################################
 
 sub sortChr {
-	my $chr1 = substr($a, 3);
-	my $chr2 = substr($b, 3);
+	my $chr1;
+	my $chr2;
+	if ($a =~ m/chr/i) { $chr1 = substr($a, 3); } else { $chr1 = $a; }
+	if ($b =~ m/chr/i) { $chr2 = substr($b, 3); } else { $chr2 = $b; }
 	if ($chr1 =~ /\d+/ && $chr2 =~ /\D+/) { return -1; }
 	if ($chr1 =~ /\D+/ && $chr2 =~ /\d+/) { return 1; }
 	if ($chr1 =~ /\d+/ && $chr2 =~ /\d+/) { return $chr1 <=> $chr2; }
