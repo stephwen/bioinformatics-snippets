@@ -30,7 +30,10 @@ while (my $line = <IN>) {
 	next if 1..26;
 	chomp($line);
 	my ($Index, $ArrayName, $Class, $Chr, $Cytoband, $SizeBP, $Start, $Stop,
-		$Type, $Probes,	$pValuePerLOHScore, $AvgCGHLR, $GeneNames) = split(/\t/, $line);
+		$MaxCytoband, $MaxSizebp, $MaxStartbp, $MaxStopbp, $Type, $Probes,	
+		$pValuePerLOHScore, $AvgCGHLR, $GeneNames, $CNVDGV_hg19, $Cytoband_hg19,
+		$Genes_hg19, $PseudoAutosomalRegions_hg19, $CNVDGV_hg18, $Cytoband_hg18,
+		$Genes_hg18, $PseudoAutosomalRegions_hg18) = split(/\t/, $line);
 		$Start =~ s/,//g;
 		$Stop =~ s/,//g;
 	if ($Type eq "LOH") {
@@ -50,7 +53,10 @@ while (my $line = <IN>) {
 	next if 1..26;
 	chomp($line);
 	my ($Index, $ArrayName, $Class, $Chr, $Cytoband, $SizeBP, $Start, $Stop,
-		$Type, $Probes,	$pValuePerLOHScore, $AvgCGHLR, $GeneNames) = split(/\t/, $line);
+		$MaxCytoband, $MaxSizebp, $MaxStartbp, $MaxStopbp, $Type, $Probes,	
+		$pValuePerLOHScore, $AvgCGHLR, $GeneNames, $CNVDGV_hg19, $Cytoband_hg19,
+		$Genes_hg19, $PseudoAutosomalRegions_hg19, $CNVDGV_hg18, $Cytoband_hg18,
+		$Genes_hg18, $PseudoAutosomalRegions_hg18) = split(/\t/, $line);
 		$Start =~ s/,//g;
 		$Stop =~ s/,//g;
 	if ($Type eq "LOH") {
