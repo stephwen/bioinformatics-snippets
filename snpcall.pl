@@ -29,13 +29,15 @@ my $dbSNPVCF = "/home/safe/swe/exomes/dbSNP.vcf";
 my $dbSNPReorderedVCF = "/home/safe/swe/exomes/dbsnp_137.hg19_reOrdered.vcf";
 my $thousandsGenomeVCF = "/home/safe/swe/exomes/1000G_omni2.5.hg19.vcf";
 my $hapmapVCF = "/home/safe/swe/exomes/hapmap_3.3.hg19_reOrdered.vcf";
+my $annovarDb = "/home/volatile/swe/soft/annovar/humandb/";
 
 my $prefix = dirname($bam)."/SNPCall";
 my $rawVCF = $prefix."_raw.vcf";
 my $recalFile = $prefix.".recal";
 my $tranchesFile = $prefix.".tranches";
 my $recalFilteredVCF = $prefix."_recalibrated_filtered.vcf";
-
+my $avinputFile = $prefix."_recalibrated_filtered.avinput";
+my $annovarPrefix = $prefix."_annovar";
 
 print "\n****************************************\n";
 print "*        SNP calling pipeline v1       *\n";
@@ -46,6 +48,8 @@ push(@{$commands{1}{'cmd'}}, "$samtoolsExe index $bam");
 push(@{$commands{2}{'cmd'}}, "java -Xmx4g -jar $GATKExe -R $ref -T UnifiedGenotyper -I $bam --dbsnp $dbSNPVCF -o $rawVCF -dcov 200");
 push(@{$commands{3}{'cmd'}}, "java -Xmx4g -jar $GATKExe -T VariantRecalibrator -R $ref -input $rawVCF -resource:hapmap,known=false,training=true,truth=true,prior=15.0 $hapmapVCF -resource:omni,known=false,training=true,truth=false,prior=12.0 $thousandsGenomeVCF -resource:dbsnp,known=true,training=false,truth=false,prior=6.0 $dbSNPReorderedVCF -an QD -an HaplotypeScore -an MQRankSum -an ReadPosRankSum -an FS -an MQ -mode BOTH -recalFile $recalFile -tranchesFile $tranchesFile");
 push(@{$commands{4}{'cmd'}}, "java -Xmx4g -jar $GATKExe -T ApplyRecalibration -R $ref -input $rawVCF --ts_filter_level 99.0 -mode BOTH -recalFile $recalFile -tranchesFile $tranchesFile -o $recalFilteredVCF");
+push(@{$commands{5}{'cmd'}}, "convert2annovar.pl $recalFilteredVCF -format vcf4 > $avinputFile");
+push(@{$commands{5}{'cmd'}}, "summarize_annovar.pl --buildver hg19 --verdbsnp 135 --ver1000g 1000g2012apr --veresp 6500 --outfile $annovarPrefix $avinputFile $annovarDb");
 
 $commands{1}{'descr'} = "Indexing BAM file";
 $commands{2}{'descr'} = "Calling the GATK UnifiedGenotyper";

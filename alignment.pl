@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use File::Basename;
+use File::Temp qw/ tempfile tempdir /;
 
 my $dir = shift;
 
@@ -32,13 +33,13 @@ my $bwaVersion = "0.6.2";
 my $samtoolsExe = "/home/swe/2012-09-11/samtools-0.1.18/samtools";
 my $samtoolsVersion = "0.1.18";
 
-my $picardDir = "/home/volatile/swe/2012-10-03/picard-tools-1.77/";
+my $picardDir = "/home/safe/swe/2012-10-03/picard-tools-1.77/";
 my $picardVersion = "1.77";
 
 my $GATKExe = "/home/volatile/swe/2012-10-08/GenomeAnalysisTKLite-2.1-11-gfb37f33/GenomeAnalysisTKLite.jar";
 my $GATKVersion = "2.1.11";
 
-my $tmpDir = "/home/volatile/swe/tmp";
+my $tmpDir = File::Temp::tempdir("/home/volatile/swe/TMP/XXXXXXXX");
 
 my $usage = <<EOUSAGE;
 Usage: perl $0 <directory with fastq files>
@@ -142,4 +143,3 @@ sub getTime {
 	my $theTime = "$weekDays[$dayOfWeek] $months[$month] $dayOfMonth, $year - $hour:$minute:$second";
 	return $theTime;
 }
-
