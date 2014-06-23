@@ -14,7 +14,7 @@ if (!$file || !-f $file) {	die("usage: perl $0 <annovar output>\n"); }
 
 open(IN, "<", $file);
 while (my $line = <IN>) {
-	 if (1..1) { next; }
+	if (1..1) { next; }
 	my @fields = split(/,/, $line);
 	my $gene = $fields[1];
 	$gene =~ s/"//g;

@@ -6,6 +6,7 @@ use File::Basename;
 use File::Temp qw/ tempfile tempdir /;
 
 my $dir = shift;
+my $bedFile = shift;
 
 my $currentTime = &getTime();
 
@@ -23,15 +24,17 @@ my $coverageFile;
 my %commands;
 
 my $ref = "/home/volatile/swe/exomes/hg19.fasta";
-my $trueSeqBed = "/home/volatile/swe/exomes/TruSeq-for-Picard.bed";
+#my $trueSeqBed = "/home/volatile/swe/exomes/TruSeq-for-Picard.bed";
+my $trueSeqBed = $bedFile;
+
 my $dbSNPVCF = "/home/safe/swe/exomes/dbSNP.vcf";
 my $intervalsFile = "/home/volatile/swe/exomes/output.intervals";
 
 my $bwaExe = "/home/volatile/swe/2012-10-08/bwa-0.6.2/bwa";
 my $bwaVersion = "0.6.2";
 
-my $samtoolsExe = "/home/swe/2012-09-11/samtools-0.1.18/samtools";
-my $samtoolsVersion = "0.1.18";
+my $samtoolsExe = "/home/volatile/swe/soft/samtools-0.1.19/samtools";
+my $samtoolsVersion = "0.1.19";
 
 my $picardDir = "/home/safe/swe/2012-10-03/picard-tools-1.77/";
 my $picardVersion = "1.77";
@@ -42,10 +45,11 @@ my $GATKVersion = "2.1.11";
 my $tmpDir = File::Temp::tempdir("/home/volatile/swe/TMP/XXXXXXXX");
 
 my $usage = <<EOUSAGE;
-Usage: perl $0 <directory with fastq files>
+Usage: perl $0 <directory with fastq files> <bed file>
 EOUSAGE
 
 if(!$dir || !-d $dir) { die($usage); }
+if(!$bedFile) { die($usage); }
 
 print "\n****************************************\n";
 print "*       Reads mapping pipeline v1      *\n";
