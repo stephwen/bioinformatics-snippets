@@ -19,7 +19,7 @@ use LWP::Simple;
 use Time::HiRes qw( usleep ualarm );
 
 my $registry;
-my $OMIMAPIKey = "Replace this with your own OMIM API key";
+my $OMIMAPIKey = "replace this with your own OMIM API Key";	# 2016-03-24
 
 my $stdin = shift;
 
@@ -42,8 +42,12 @@ if (-f $stdin) {
 	&loadEnsembl;
 	for my $line (@lines) {
 		chomp($line);
-		&noFile($line);
-		print "\n";
+		if ($line =~ /^#/ || $line =~ /^$/) {
+			print $line."\n";
+		} else {
+			&noFile($line);
+			print "\n";
+		}
 	}
 } else {
 	&noFile($stdin);
@@ -60,6 +64,7 @@ sub noFile {
 	        $stdin .= "-".$start;
 	        &regionMode($stdin);
 	} else {
+		print "Wrong format $stdin\n";
 		die($usage);
 	}
 }
@@ -72,46 +77,50 @@ sub regionMode {
 	my $slice_adaptor = $registry->get_adaptor( 'Human', 'Core', 'Slice' );
 	print "Region $chr:$start-$end\n\n";
 	my $slice = $slice_adaptor->fetch_by_region( 'chromosome', $chr, $start, $end);
-	my $genes = $slice->get_all_Genes();
-	while ( my $gene = shift @{$genes} ) {
-		my $start = $gene->seq_region_start();	
-		my $end = $gene->seq_region_end();	
-		my $name = $gene->external_name();
-		my @phenotypes;
-		my %OMIMNumbers;	# I use a hash instead of an array for this because of possible duplicates
+	if ($slice) {
+		my $genes = $slice->get_all_Genes();
+		while ( my $gene = shift @{$genes} ) {
+			my $start = $gene->seq_region_start();	
+			my $end = $gene->seq_region_end();	
+			my $name = $gene->external_name();
+			my $description = $gene->description();
+			if ($description) { $description =~ s/ \[.*?\]//gs; } else { $description = "N/A"; }
+			my @phenotypes;
+			my %OMIMNumbers;	# I use a hash instead of an array for this because of possible duplicates
 		
-    	print "chr".$chr.":".$start."-".$end."\t$name\t";
+			print "chr".$chr.":".$start."-".$end."\t$name\t$description\t";
 		
-		my @xrefs = @{ $gene->get_all_xrefs('MIM_GENE%')};
-		for my $xref (@xrefs) {
-			my $omimString = $xref->display_id();
-			if ($omimString =~ /(\d{6})/g) {
-				print "http://omim.org/entry/".$1." ";
-				$OMIMNumbers{$1} = 1;
-			}
-		}
-		print "\t";
-		@xrefs = @{ $gene->get_all_xrefs('MIM_MORBID%')};
-		for my $xref (@xrefs) {
+			my @xrefs = @{ $gene->get_all_xrefs('MIM_GENE%')};
+			for my $xref (@xrefs) {
 				my $omimString = $xref->display_id();
 				if ($omimString =~ /(\d{6})/g) {
-						print "http://omim.org/entry/".$1." ";
-						$OMIMNumbers{$1} = 1;
-				}
-		}
-		print "\t";
-		my $toPrint = "";
-		if (keys %OMIMNumbers) {
-			for my $OMIMNumber (keys %OMIMNumbers) {
-				usleep(300000);
-				my $phenotype = &getPhenotypes($OMIMNumber);
-				if ($phenotype =~ m/\S/) {
-					$toPrint .= $phenotype." | ";
+					print "http://omim.org/entry/".$1." ";
+					$OMIMNumbers{$1} = 1;
 				}
 			}
-			if (length($toPrint) > 3) { $toPrint = substr($toPrint, 0, -3); }
+			print "\t";
+			@xrefs = @{ $gene->get_all_xrefs('MIM_MORBID%')};
+			for my $xref (@xrefs) {
+					my $omimString = $xref->display_id();
+					if ($omimString =~ /(\d{6})/g) {
+							print "http://omim.org/entry/".$1." ";
+							$OMIMNumbers{$1} = 1;
+					}
+			}
+			print "\t";
+			my $toPrint = "";
+			if (keys %OMIMNumbers) {
+				for my $OMIMNumber (keys %OMIMNumbers) {
+					usleep(300000);
+					my $phenotype = &getPhenotypes($OMIMNumber);
+					if ($phenotype =~ m/\S/) {
+						$toPrint .= $phenotype." | ";
+					}
+				}
+				if (length($toPrint) > 3) { $toPrint = substr($toPrint, 0, -3); }
+			}
+			print $toPrint."\n";
 		}
-		print $toPrint."\n";
 	}
 }
 
@@ -126,10 +135,12 @@ sub loadEnsembl {
 
 sub getPhenotypes {
 	my $OMIMNumber = shift;
+	sleep(1);
 	my $return = "";
 	my $url = "http://api.europe.omim.org/api/entry?apiKey=".$OMIMAPIKey."&mimNumber=".$OMIMNumber."&include=geneMap&phenotypeExists=true";
 	my $xml = get($url);
 	my $xmlObject = new XML::Simple;
+	return $return if !$xml;
 	my $data = $xmlObject->XMLin($xml, ForceArray => ['phenotypeMap']);
 
 	if ($data->{'entryList'}->{'entry'}->{'geneMap'}->{'phenotypeMapList'}->{'phenotypeMap'}) {
