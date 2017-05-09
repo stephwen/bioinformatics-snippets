@@ -19,7 +19,7 @@ use LWP::Simple;
 use Time::HiRes qw( usleep ualarm );
 
 my $registry;
-my $OMIMAPIKey = "replace this with your own OMIM API Key";	# 2016-03-24
+my $OMIMAPIKey = "Replace this with your own OMIM API key";
 
 my $stdin = shift;
 
@@ -137,7 +137,7 @@ sub getPhenotypes {
 	my $OMIMNumber = shift;
 	sleep(1);
 	my $return = "";
-	my $url = "http://api.europe.omim.org/api/entry?apiKey=".$OMIMAPIKey."&mimNumber=".$OMIMNumber."&include=geneMap&phenotypeExists=true";
+	my $url = "http://api.omim.org/api/entry?apiKey=".$OMIMAPIKey."&mimNumber=".$OMIMNumber."&include=geneMap&phenotypeExists=true";
 	my $xml = get($url);
 	my $xmlObject = new XML::Simple;
 	return $return if !$xml;
